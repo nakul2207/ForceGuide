@@ -1,0 +1,157 @@
+.header {
+  text-align: center;
+  padding: 0.6rem 0.8rem 1.2rem;
+  background: linear-gradient(135deg, #1976D2 0%, #2196F3 100%);
+  color: white;
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 0.6rem;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+  position: relative;
+}
+
+.app-name {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
+}
+
+.creator {
+  position: absolute;
+  right: 10px;
+  top: 2.65rem;
+  font-size: 0.65rem;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.content {
+  padding: 0 0.8rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.popup-container {
+  min-width: 250px;
+  max-width: 270px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(33, 150, 243, 0.1);
+}
+
+.popup-title {
+  color: #2196F3;
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.select-wrapper {
+  margin-bottom: 0.6rem;
+  text-align: center;
+  width: 100%;
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: '▼';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #2196F3;
+  pointer-events: none;
+  font-size: 0.6rem;
+}
+
+.language-dropdown {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid rgba(33, 150, 243, 0.3);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  outline: none;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+  cursor: pointer;
+  appearance: none;
+}
+
+.language-dropdown:hover {
+  border-color: rgba(33, 150, 243, 0.5);
+  background: white;
+}
+
+.language-dropdown:focus {
+  border-color: #2196F3;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.selected-language {
+  margin: 0.8rem 0;
+  color: #555;
+  text-align: center;
+  padding: 0.6rem;
+  background: rgba(33, 150, 243, 0.05);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.selected-language span {
+  color: #2196F3;
+  font-weight: bold;
+  margin-left: 3px;
+}
+
+.save-button {
+  padding: 6px 20px;
+  font-size: 0.85rem;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  margin-top: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.save-button:hover {
+  background-color: #1976D2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.save-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.success-message {
+  color: #2196F3;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 0.75rem;
+  padding: 5px 10px;
+  background: rgba(33, 150, 243, 0.1);
+  border-radius: 16px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

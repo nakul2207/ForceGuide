@@ -1,0 +1,110 @@
+
+.content-page {
+    margin: 30px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+.show-answers-btn {
+    padding: 10px 24px;
+    font-size: 16px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.show-answers-btn:hover {
+    background-color: #1976D2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.submission-container{
+    border-radius: 12px;
+    padding-block: 10px;
+    padding-inline: 20px;
+    margin-bottom: 1rem;
+}
+
+.answer-prompt h2{
+    text-align: center;
+}
+.answer-prompt {
+    background-color: white;
+    color: #333;
+    padding-block: 25px;
+    padding-inline: 25px;
+    border-radius: 12px;
+    margin-top: 1.5rem;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #ccc;
+}
+
+.answer-prompt a {
+    color: #2196F3;
+    text-decoration: none;
+    display: block;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    transition: color 0.2s ease;
+}
+
+.answer-prompt a:hover {
+    color: #1976D2;
+}
+
+.answer-prompt p {
+    color: #666;
+    margin: 2px 0 4px 0;
+    font-size: 14px;
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    height: 14rem;
+    margin: 10px auto;
+}
+
+.submission-item {
+    margin-bottom: 1rem;
+}
+
+.answer-prompt iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.problem-header {
+    width: 100%;
+    padding: 0 20px;
+}
+
+.loader {
+    border: 3px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 3px solid #2196F3;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

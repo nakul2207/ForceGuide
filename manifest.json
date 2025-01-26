@@ -1,0 +1,16 @@
+{
+    "manifest_version": 3,
+    "name": "ForceGuide",
+    "version": "1.0.0",
+    "description": "An extension to display solutions and video explanations for Codeforces problems.",
+    "permissions":["storage", "activeTab", "scripting", "tabs"],
+    "action":{
+        "default_popup":"index.html"
+    },
+    "content_scripts": [
+      {
+        "matches": ["https://codeforces.com/problemset/problem/*", "https://codeforces.com/contest/*/problem/*"],
+        "js": ["src/content.tsx"]
+      }
+    ]
+  }
