@@ -12,17 +12,7 @@ export const search = async (req: Request, res: Response) => {
 
   try {
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--single-process'
-      ],
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || 
-        '/opt/render/.cache/puppeteer/chrome/linux-132.0.6834.110/chrome-linux64/chrome'
-    });
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "domcontentloaded" });
 
