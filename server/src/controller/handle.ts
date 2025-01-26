@@ -11,6 +11,7 @@ export const search = async (req: Request, res: Response) => {
   const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
 
   try {
+
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "domcontentloaded" });
