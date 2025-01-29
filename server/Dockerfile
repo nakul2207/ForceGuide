@@ -1,21 +1,23 @@
 # Use Puppeteer's official base image with all dependencies pre-installed
-FROM ghcr.io/puppeteer/puppeteer:latest
+FROM ghcr.io/puppeteer/puppeteer:21.5.2
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
-COPY --chown=pptruser:pptruser package*.json ./
+# Copy package files
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy all files and build the TypeScript project
-COPY --chown=pptruser:pptruser . .
-RUN npx tsc
+# Copy source code
+COPY . .
+
+# Build TypeScript
+RUN npm run build
 
 # Expose the application port
 EXPOSE 3000
 
 # Start the application
-CMD ["node", "dist/app.js"]
+CMD ["npm", "start"]

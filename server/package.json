@@ -4,12 +4,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && npx puppeteer browsers install chrome",
+    "build": "tsc",
     "start": "node dist/app.js",
-    "dev": "nodemon src/app.ts"  
+    "dev": "nodemon src/app.ts"
   },
   "keywords": [],
-
   "author": "",
   "license": "ISC",
   "description": "",
@@ -20,13 +19,17 @@
     "express": "^4.21.2",
     "nodemon": "^3.1.9",
     "puppeteer": "^24.1.1",
-    "puppeteer-core": "^24.1.1"
+    "puppeteer-core": "^24.1.1",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.0",
     "@types/jsdom": "^21.1.7",
-    "ts-node": "^10.9.2"
+    "@types/node": "^22.12.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
   }
 }

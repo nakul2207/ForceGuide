@@ -3,7 +3,15 @@
     "name": "ForceGuide",
     "version": "1.0.0",
     "description": "An extension to display solutions and video explanations for Codeforces problems.",
-    "permissions":["storage", "activeTab", "scripting", "tabs"],
+    "permissions": [
+        "storage", 
+        "activeTab", 
+        "scripting", 
+        "tabs"
+    ],
+    "host_permissions": [
+        "https://codeforces.com/*"
+    ],
     "action":{
         "default_popup":"index.html"
     },
@@ -12,5 +20,9 @@
         "matches": ["https://codeforces.com/problemset/problem/*", "https://codeforces.com/contest/*/problem/*"],
         "js": ["src/content.tsx"]
       }
-    ]
+    ],
+    "background": {
+        "service_worker": "src/background.ts",
+        "type": "module"
+    }
   }

@@ -1,21 +1,21 @@
-import  { useState, useEffect } from "react";
-import axios from "axios";  
-import "./Contentpage.css"; // Assuming you have a CSS file for styling
-interface SubmissionData{
-  submissionLink:string;
-  language:string;
+import { useState, useEffect } from "react";
+import "./Contentpage.css";
+
+interface SubmissionData {
+  submissionLink: string;
+  language: string;
 }
 
 export const ContentPage = () => {
-  // const apiKey = import.meta.env.VITE_YOUTUBE_APIKEY;
-  // console.log(apiKey) 
   const [isPromptVisible, setIsPromptVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [submissionids, setSubmissionids] = useState<SubmissionData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [submissionids, setSubmissionids] = useState<number[]>([]);
   const [ytVideoId, setYtVideoId] = useState<string>("");
   const [language, setLanguage] = useState<string>("C++");
+  const [error, setError] = useState<string | null>(null);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
+  // Parse URL to get contest and problem info
   const currentUrl = window.location.href;
   const parts = currentUrl.split("/");
   
@@ -32,148 +32,129 @@ export const ContentPage = () => {
 
   const handleButtonClick = () => {
     setIsPromptVisible(!isPromptVisible);
+    setError(null);
   };
 
-  const fetchAcceptedSubmissions = async (contestId:number, problemIndex:string, language:string) => {
-    try {
-      // Fetch submissions from the contest
-        const response = await axios.get('https://codeforces.com/api/contest.status', {
-            params: {
-                contestId: contestId,
-                from: 1,
-                count: 5000
-            }
-        });
-        // Check if the API response is OK
-        if (response.data.status !== 'OK') {
-            throw new Error(response.data.comment);
-        }
-
-        // Get first two characters of the selected language for comparison
-        const languagePrefix = language.substring(0, 2).toLowerCase();
-        
-        const acceptedSubmissions = response.data.result.filter((submission: any) => {
-          return submission.problem.index === problemIndex &&
-                submission.programmingLanguage.toLowerCase().startsWith(languagePrefix) && 
-                submission.verdict === 'OK';
-        }).map((submission: any) => submission.id);
-        return acceptedSubmissions.slice(0, 5);
-    } catch (error:any) {
-        console.error('Error:', error.message);
-        return [];
-    }
-  };
   useEffect(() => {
-    const fetchSubmissions = async () => {
+    const fetchData = async () => {
+      if (!isPromptVisible || initialLoadDone) return;
+      
       try {
         setIsLoading(true);
+        setError(null);
+
+        // Get stored language preference
         const storageResult = await new Promise<{ [key: string]: any }>(resolve => 
           chrome.storage.local.get(["selectedLanguage"], resolve)
         );
-        const storedData = storageResult.selectedLanguage;
-        setLanguage(storedData);
+        const storedLanguage = storageResult.selectedLanguage || language;
+        setLanguage(storedLanguage);
 
+        // Get problem info from current page first
+        const problemInfoResponse = await new Promise<any>(resolve => {
+          chrome.runtime.sendMessage({
+            type: 'FETCH_PROBLEM_INFO'
+          }, resolve);
+        });
 
-        // Create a new variable to use the latest language value
-        const currentLanguage = storedData || language;
-        const acceptedSubmissions = await fetchAcceptedSubmissions(contestId, problemIndex, currentLanguage);
-        setSubmissionids(acceptedSubmissions);
-  
+        if (problemInfoResponse.error) {
+          throw new Error(problemInfoResponse.error);
+        }
 
-        // Fetch the Codeforces HTML page
-        const response = await fetch(`https://codeforces.com/contest/${contestId}/status/${problemIndex}`);
-        const html = await response.text();
+        // Search for video only if not already fetched
+        if (!ytVideoId) {
+          const videoResponse = await new Promise<any>(resolve => {
+            chrome.runtime.sendMessage({
+              type: 'SEARCH_VIDEO',
+              query: problemInfoResponse.contestName
+            }, resolve);
+          });
 
+          if (videoResponse.error) {
+            console.error('Video search error:', videoResponse.error);
+          } else {
+            setYtVideoId(videoResponse);
+          }
+        }
 
-        // Parse the HTML using DOMParser
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
-        const problemName = document.querySelector(".title")?.textContent;
-        const contestRow  = doc.querySelectorAll<HTMLTableRowElement>(".rtable tr")
-        const contest = contestRow[0].querySelector<HTMLAnchorElement>("a")
-        const contestName = "Codeforces " + contest?.textContent +" "+ problemName;
+        // Fetch submissions
+        const submissionsResponse = await new Promise<any>(resolve => {
+          chrome.runtime.sendMessage({
+            type: 'FETCH_SUBMISSIONS',
+            contestId,
+            problemIndex,
+            languagePrefix: storedLanguage.substring(0, 2).toLowerCase()
+          }, resolve);
+        });
 
+        if (submissionsResponse.error) {
+          throw new Error(submissionsResponse.error);
+        }
+        setSubmissionids(submissionsResponse.submissions);
+        setInitialLoadDone(true);
 
-        //search for video
-        const url = `${import.meta.env.VITE_SERVER_URL}/search?q=${contestName}`;
-        const result = await fetch(url)
-        .then(response => response.json())
-        .catch(error => console.error('Error:', error));
-        setYtVideoId(result);
-
-        // const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(contestName)}&type=video&key=${apiKey}`;
-        // console.log(url)
-        // await fetch(url)
-        // .then(response => response.json())
-        // .then(data => {
-        //   const firstVideo = data.items[0];
-        //   setYtVideoId(firstVideo.id.videoId);
-        // })
-        // .catch(error => console.error('Error:', error));
-
-        // rows.forEach((row) => {
-        //   const submissionLinkElement = row.querySelector<HTMLAnchorElement>("a.view-source");
-        //   const languageElement = row.querySelector<HTMLTableCellElement>("td:nth-child(5)");
-
-        //   if (submissionLinkElement && languageElement) {
-        //     extractedSubmissions.push({
-        //       submissionLink: `https://codeforces.com${submissionLinkElement.getAttribute("href")}`,
-        //       language: languageElement.textContent?.trim() || "Unknown",
-        //     });
-        //   }
-        // });
-      } catch (err) {
-        console.error(err);
-        console.log("Failed to fetch submissions. Please try again later.");
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError(error instanceof Error ? error.message : 'An error occurred');
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchSubmissions();
-  }, [language, contestId, problemIndex]);
+    fetchData();
+  }, [isPromptVisible, contestId, problemIndex]);  
 
   return (
     <div className="content-page">
       <div className="problem-header">
-        <button className="show-answers-btn" onClick={handleButtonClick}>
-          Show Answers
+        <button 
+          className="show-answers-btn" 
+          onClick={handleButtonClick}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Loading...' : isPromptVisible ? 'Hide Answers' : 'Show Answers'}
         </button>
       </div>
 
-      {/* Show prompt if visible */}
       {isPromptVisible && (
         <div className="answer-prompt">
           <h2>Available Solutions</h2>
           {isLoading ? (
             <div className="loader"></div>
+          ) : error ? (
+            <div className="error-message">{error}</div>
           ) : (
             <>
-            <div className="submission-container">
-              {submissionids.length > 0 ? (
-                submissionids.map((submission,index)=>{
-                  return(
-                    <div key={index} className="submission-item">
-                      <a href={`https://codeforces.com/contest/${contestId}/submission/${submission}`} target="_blank" rel="noopener noreferrer">
+              <div className="submission-container">
+                {submissionids.length > 0 ? (
+                  submissionids.map((submissionId, index) => (
+                    <div key={submissionId} className="submission-item">
+                      <a 
+                        href={`https://codeforces.com/contest/${contestId}/submission/${submissionId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         Solution #{index + 1}
                       </a>
                       <p>Language: {language}</p>
                     </div>
-                  )
-                })
-              ) : (
-                <p>No Results Found</p>
-              )}
-            </div>
+                  ))
+                ) : (
+                  <p>No solutions found for the selected language.</p>
+                )}
+              </div>
+              
               {ytVideoId && (
                 <>
                   <h2>Video Solution</h2>
                   <div className="video-container">
                     <iframe 
-                      src={`https://www.youtube.com/embed/${ytVideoId}`} 
-                      title="YouTube video player" 
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                      referrerPolicy="strict-origin-when-cross-origin" 
+                      width="560"
+                      height="315"
+                      src={`https://www.youtube.com/embed/${ytVideoId}`}
+                      title="YouTube video player"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     />
                   </div>
