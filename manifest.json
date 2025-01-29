@@ -10,7 +10,8 @@
         "tabs"
     ],
     "host_permissions": [
-        "https://codeforces.com/*"
+      "*://*.codeforces.com/*",
+      "*://*.youtube.com/*"
     ],
     "action":{
         "default_popup":"index.html"
